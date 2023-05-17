@@ -1,19 +1,23 @@
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv("C:/Python/EnvironmentVariables/.env")
 
 
 def telegram_bot_send_text(bot_message):
-    bot_token = 'YOUR_BOT_TOKEN'
-    bot_chat_id = 'YOUR_CHAT_ID'
+    bot_token = os.environ.get("rain_alert_bot_token")
+    bot_chat_id = os.environ.get("rain_alert_chat_id")
     send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chat_id + '&parse_mode=Markdown&text=' + bot_message
     response = requests.get(send_text)
     return response.json()
 
 
 def get_weather_data():
-    api_key = "YOUR_API_KEY"
+    api_key = os.environ.get("owm_api_key")
     parameters = {
-        "lat": 60.55,
-        "lon": 15.28,
+        "lat": 48.41,
+        "lon": 19.43,
         "appid": api_key,
         "exclude": "current,minutely,daily"
     }
@@ -31,5 +35,6 @@ def get_weather_data():
     return will_rain
 
 
-test = telegram_bot_send_text("It's going to rain in the next 12 hours. "
-                              "You should probably take an umbrella if you go out.")
+if get_weather_data():
+    print(telegram_bot_send_text("It's going to rain in the next 12 hours. You should take an umbrella if you go out."))
+
